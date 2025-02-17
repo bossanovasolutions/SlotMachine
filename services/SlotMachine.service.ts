@@ -81,7 +81,7 @@ class SlotMachineService {
 
     constructor() {
         this.setUserPoints(0);
-        this.setRolls(10);
+        this.setRolls(200);
     }
 
     setUserPoints(points: number) {
@@ -117,14 +117,14 @@ class SlotMachineService {
         let currentPoints = 0
         rolls.forEach(i => {
             console.log('VALIDATION ===>>', { i })
-            if (i[0]?.slot === i[1]?.slot && i[1]?.slot === i[3]?.slot) {
+            if (i[0]?.slot === i[1]?.slot && i[1]?.slot === i[2]?.slot) {
                 currentPoints += i[0].points
                 console.log('SUM POINTS =##')
             } else {
                 console.log('NOT POINT GAINED =##')
             }
         })
-        this.setUserPoints(currentPoints);
+        return currentPoints
     }
 }
 
