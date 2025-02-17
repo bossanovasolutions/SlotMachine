@@ -1,40 +1,32 @@
 // App.js
 
+import { SlotMachineService } from '@/services/SlotMachine.service';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-// Array com as figuras possíveis (de 1 a 9)
-const figures = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-// Função para girar o rolo e pegar uma figura aleatória
-const spinReel = () => {
-  const randomIndex = Math.floor(Math.random() * figures.length);
-  return figures[randomIndex];
-};
-
 export default function App() {
+  // servico para manejo e validacao dos slots
+  const slotMachineService = new SlotMachineService();
   // Estados para os rolos e o resultado
-  const [reel1, setReel1] = useState(0);
-  const [reel2, setReel2] = useState(0);
-  const [reel3, setReel3] = useState(0);
+  const [reel1, setReel1] = useState(slotMachineService.generateSpinReel());
+  const [reel2, setReel2] = useState(slotMachineService.generateSpinReel());
+  const [reel3, setReel3] = useState(slotMachineService.generateSpinReel());
+  const [pontuation, setPontuation] = useState(slotMachineService.getUserPoints());
   const [result, setResult] = useState('');
 
   // Função para girar a slot machine
   const playSlotMachine = () => {
-    const newReel1 = spinReel();
-    const newReel2 = spinReel();
-    const newReel3 = spinReel();
+    const newReel1 = slotMachineService.generateSpinReel()
+    const newReel2 = slotMachineService.generateSpinReel()
+    const newReel3 = slotMachineService.generateSpinReel()
 
     setReel1(newReel1);
     setReel2(newReel2);
     setReel3(newReel3);
 
     // Verificando se o jogador ganhou
-    if (newReel1 === newReel2 && newReel2 === newReel3) {
-      setResult('Parabéns! Você ganhou!');
-    } else {
-      setResult('Que pena! Tente novamente.');
-    }
+    slotMachineService.validateRoll([[newReel1, newReel2, newReel3]]);
+    setPontuation(slotMachineService.getUserPoints());
   };
 
   return (
@@ -42,16 +34,16 @@ export default function App() {
       <Text style={styles.title}>Slot Machine</Text>
 
       <View style={styles.slotRow}>
-        <Text style={styles.slot}>{reel1}</Text>
-        <Text style={styles.slot}>{reel2}</Text>
-        <Text style={styles.slot}>{reel3}</Text>
+        <Text style={styles.slot}>{reel1?.figure}</Text>
+        <Text style={styles.slot}>{reel2?.figure}</Text>
+        <Text style={styles.slot}>{reel3?.figure}</Text>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={playSlotMachine}>
         <Text style={styles.buttonText}>Girar</Text>
       </TouchableOpacity>
 
-      <Text style={styles.result}>{result}</Text>
+      <Text style={styles.result}>{`Pontuação: ${pontuation}`}</Text>
     </View>
   );
 }
@@ -75,7 +67,7 @@ const styles = StyleSheet.create({
   slot: {
     fontSize: 40,
     marginHorizontal: 10,
-    width: 50,
+    width: 100,
     textAlign: 'center',
     borderWidth: 2,
     borderColor: '#000',
