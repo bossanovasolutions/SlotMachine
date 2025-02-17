@@ -1,74 +1,98 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+// App.js
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function HomeScreen() {
+// Array com as figuras possíveis (de 1 a 9)
+const figures = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+// Função para girar o rolo e pegar uma figura aleatória
+const spinReel = () => {
+  const randomIndex = Math.floor(Math.random() * figures.length);
+  return figures[randomIndex];
+};
+
+export default function App() {
+  // Estados para os rolos e o resultado
+  const [reel1, setReel1] = useState(0);
+  const [reel2, setReel2] = useState(0);
+  const [reel3, setReel3] = useState(0);
+  const [result, setResult] = useState('');
+
+  // Função para girar a slot machine
+  const playSlotMachine = () => {
+    const newReel1 = spinReel();
+    const newReel2 = spinReel();
+    const newReel3 = spinReel();
+
+    setReel1(newReel1);
+    setReel2(newReel2);
+    setReel3(newReel3);
+
+    // Verificando se o jogador ganhou
+    if (newReel1 === newReel2 && newReel2 === newReel3) {
+      setResult('Parabéns! Você ganhou!');
+    } else {
+      setResult('Que pena! Tente novamente.');
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Slot Machine</Text>
+
+      <View style={styles.slotRow}>
+        <Text style={styles.slot}>{reel1}</Text>
+        <Text style={styles.slot}>{reel2}</Text>
+        <Text style={styles.slot}>{reel3}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={playSlotMachine}>
+        <Text style={styles.buttonText}>Girar</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.result}>{result}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    backgroundColor: '#fff',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  slotRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  slot: {
+    fontSize: 40,
+    marginHorizontal: 10,
+    width: 50,
+    textAlign: 'center',
+    borderWidth: 2,
+    borderColor: '#000',
+    padding: 10,
+    borderRadius: 10,
+  },
+  button: {
+    backgroundColor: '#ff6347',
+    padding: 15,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+  },
+  result: {
+    fontSize: 24,
+    marginTop: 20,
   },
 });
